@@ -32,7 +32,7 @@ export interface GameState {
   winner: Winner | null;
   winReason: WinReason | null;
   /** Result of the most recent guess, kept across turn handoff for UI feedback. */
-  lastGuess: { index: number; outcome: GuessOutcome } | null;
+  lastGuess: { index: number; outcome: GuessOutcome; by: Team } | null;
   clueHistory: Clue[];
 }
 
@@ -167,7 +167,7 @@ function applyGuess(state: GameState, index: number): GameState {
   const guessed: GameState = {
     ...state,
     revealed,
-    lastGuess: { index, outcome },
+    lastGuess: { index, outcome, by: state.currentTeam },
   };
 
   if (owner === 'assassin') {

@@ -26,22 +26,24 @@ export interface Board {
 
 /**
  * Generates a shuffled 25-word board with a random keycard.
- * The RNG is injectable so tests can make the board deterministic.
+ * The RNG is injectable so tests can make the board deterministic, and the
+ * starting team can be forced (the caller picks "who goes first").
  */
 export function generateBoard(
   rng: () => number = Math.random,
   wordPool: readonly string[] = WORDS,
+  startingTeam?: Team,
 ): Board {
   if (wordPool.length < GRID_SIZE) {
     throw new Error(`Word pool needs at least ${GRID_SIZE} words`);
   }
 
-  const startingTeam: Team = randInt(rng, 2) === 0 ? 'red' : 'blue';
-  const otherTeam: Team = startingTeam === 'red' ? 'blue' : 'red';
+  const first: Team = startingTeam ?? (randInt(rng, 2) === 0 ? 'red' : 'blue');
+  const otherTeam: Team = first === 'red' ? 'blue' : 'red';
 
   const owners = shuffle(
     [
-      ...Array<TileOwner>(STARTING_TEAM_AGENTS).fill(startingTeam),
+      ...Array<TileOwner>(STARTING_TEAM_AGENTS).fill(first),
       ...Array<TileOwner>(TRAILING_TEAM_AGENTS).fill(otherTeam),
       ...Array<TileOwner>(BYSTANDERS).fill('neutral'),
       'assassin' as const,
@@ -52,6 +54,6 @@ export function generateBoard(
   return {
     words: shuffle(wordPool, rng).slice(0, GRID_SIZE),
     owners,
-    startingTeam,
+    startingTeam: first,
   };
 }

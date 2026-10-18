@@ -94,7 +94,7 @@ describe('guessing', () => {
     expect(s.revealed[0]).toBe(true);
     expect(s.phase).toBe('guessing');
     expect(s.guessesLeft).toBe(3); // 4 granted, 1 used
-    expect(s.lastGuess).toEqual({ index: 0, outcome: 'agent' });
+    expect(s.lastGuess).toEqual({ index: 0, outcome: 'agent', by: 'red' });
     expect(s.currentTeam).toBe('red');
   });
 
@@ -165,7 +165,7 @@ describe('winning', () => {
     expect(s.phase).toBe('gameOver');
     expect(s.winner).toBe('blue');
     expect(s.winReason).toBe('assassin');
-    expect(s.lastGuess).toEqual({ index: 24, outcome: 'assassin' });
+    expect(s.lastGuess).toEqual({ index: 24, outcome: 'assassin', by: 'red' });
   });
 
   it('the enemy wins if their last agent is revealed accidentally', () => {
