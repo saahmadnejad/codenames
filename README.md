@@ -1,97 +1,62 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Codenames
 
-# Getting Started
+Pass-and-play digital version of the classic word-association party game, built with React Native (bare CLI) + TypeScript.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+Two teams — **Red** and **Blue** — race to identify their secret agents using one-word clues. Each team has a **spymaster** (who sees the key card) and **field agents** (who tap words on the board). The lone **assassin** ends the game instantly for whoever touches it.
 
-## Step 1: Start Metro
+## How play works on one device
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+The app is built around secure handoffs between roles. A full-screen overlay covers the board whenever the device changes hands, so no role ever sees another's information:
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+1. **Handoff → Red spymaster**: overlay covers everything, spymaster taps *"I'm the spymaster"*.
+2. **Clue phase**: spymaster sees the board with owner colors revealed, enters a one-word clue + number.
+3. **Handoff → Red field agents**: overlay shows the clue (`animal : 3`) and guesses allowed (`3 + 1`).
+4. **Guessing phase**: board hides owner colors; agents tap words. Turn ends on a bystander, enemy agent, spent guesses, or voluntary *"End turn"*.
+5. **Handoff → Blue spymaster**: overlay recaps the previous guess (`"bank" — That was red's agent`).
+6. Repeat until someone wins, or 40 turns produce a draw.
 
-```sh
-# Using npm
-npm start
+## Rules implemented
 
-# OR using Yarn
-yarn start
+- Classic keycard: **9** agents for the starting team, **8** for the other, **7** bystanders, **1** assassin.
+- Guess limit is **clue number + 1**; correct guesses keep the turn alive.
+- Bystander or enemy agent → turn ends (enemy agent counts for its team).
+- Assassin → instant loss for the guessing team.
+- First team to reveal all their agents wins — including when the *other* team reveals their last one by accident.
+- 40 turns → draw.
+- Clue validation: one word, not on the board, never repeated, number ≤ tiles still face down.
+
+## Architecture
+
+```
+src/
+  game/          Pure game domain — no React, fully unit-tested
+    board.ts       keycard generation (injectable RNG, optional forced starter)
+    words.ts       200+ word list
+    rng.ts         seeded PRNG (mulberry32) for reproducible boards
+  state/
+    gameReducer.ts game state machine (clue → guessing → turn/end/win)
+    view.ts        derives the pass-and-play handoff from state (tokens)
+  components/     Board, WordCard, ClueEntry, HandoffOverlay, TurnHeader, GameOverScreen
+  screens/        HomeScreen, GameScreen
+  theme.ts        kraft-paper palette, team colors
+__tests__/       board, gameReducer, view suites (34 tests)
 ```
 
-## Step 2: Build and run your app
+The reducer and view layers are pure functions, so all game logic is testable without rendering anything.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+## Development
 
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+npm install
+npm test          # jest
+npm run lint      # eslint
+npx tsc --noEmit  # type check
+npx react-native run-android
 ```
 
-### iOS
+If port 8081 is taken by another project's Metro, use `npx react-native start --port 8083` and `npx react-native run-android --port 8083`.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+## Conventions
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- Conventional Commits enforced via husky + commitlint (`feat:`, `fix:`, `chore:`…).
+- Pre-commit hook runs `npm run lint`.
