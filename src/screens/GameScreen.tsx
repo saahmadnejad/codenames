@@ -16,7 +16,7 @@ import {
   MAX_TURNS,
   validateClue,
 } from '../state/gameReducer';
-import { handoffFor, viewToken } from '../state/view';
+import { handoffFor, outcomeFeedback, viewToken } from '../state/view';
 import { theme, teamColor } from '../theme';
 import { RootStackParamList } from '../types';
 
@@ -96,8 +96,8 @@ export function GameScreen({ navigation }: Props) {
               </View>
               {game.lastGuess ? (
                 <Text style={styles.feedback}>
-                  Last guess: “{game.board.words[game.lastGuess.index]}” —{' '}
-                  {game.lastGuess.outcome}
+                  “{game.board.words[game.lastGuess.index]}” —{' '}
+                  {outcomeFeedback(game.lastGuess.outcome, game.lastGuess.by)}
                 </Text>
               ) : null}
               <AppButton
