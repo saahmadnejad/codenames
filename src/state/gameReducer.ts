@@ -177,6 +177,7 @@ function applyGuess(state: GameState, index: number): GameState {
       winner: otherTeam(state.currentTeam),
       winReason: 'assassin',
       guessesLeft: 0,
+      turnsTaken: state.turnsTaken + 1,
     };
   }
 
@@ -190,6 +191,7 @@ function applyGuess(state: GameState, index: number): GameState {
       winner: state.currentTeam,
       winReason: 'agents',
       guessesLeft: 0,
+      turnsTaken: state.turnsTaken + 1,
     };
   }
   // Revealing the enemy's last agent also ends the game in their favour.
@@ -200,6 +202,7 @@ function applyGuess(state: GameState, index: number): GameState {
       winner: otherTeam(state.currentTeam),
       winReason: 'agents',
       guessesLeft: 0,
+      turnsTaken: state.turnsTaken + 1,
     };
   }
 

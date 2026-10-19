@@ -14,8 +14,9 @@ export interface GameOverScreenProps {
 }
 
 const REASONS: Record<WinReason, (w: Winner) => string> = {
-  agents: w => `${String(w).toUpperCase()} found all of their agents!`,
-  assassin: w => `${String(w).toUpperCase()} wins — the assassin was found!`,
+  agents: w => `All of ${String(w).toUpperCase()}'s agents were found!`,
+  assassin: w =>
+    `${(w === 'red' ? 'blue' : 'red').toUpperCase()} found the assassin!`,
   timeout: () => `Time's up after 40 turns — it's a draw.`,
 };
 

@@ -158,6 +158,7 @@ describe('winning', () => {
     expect(s.phase).toBe('gameOver');
     expect(s.winner).toBe('red');
     expect(s.winReason).toBe('agents');
+    expect(s.turnsTaken).toBe(1); // the winning turn counts
   });
 
   it('loses instantly on the assassin', () => {
@@ -165,6 +166,7 @@ describe('winning', () => {
     expect(s.phase).toBe('gameOver');
     expect(s.winner).toBe('blue');
     expect(s.winReason).toBe('assassin');
+    expect(s.turnsTaken).toBe(1);
     expect(s.lastGuess).toEqual({ index: 24, outcome: 'assassin', by: 'red' });
   });
 
@@ -182,6 +184,7 @@ describe('winning', () => {
     expect(s.phase).toBe('gameOver');
     expect(s.winner).toBe('blue');
     expect(s.winReason).toBe('agents');
+    expect(s.turnsTaken).toBe(15); // 7 rounds of 2 + the final turn
   });
 
   it('stops accepting guesses after game over', () => {
