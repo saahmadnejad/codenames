@@ -59,12 +59,14 @@ export function HandoffOverlay({ handoff, onReady }: HandoffOverlayProps) {
           </Text>
         ) : null}
 
-        <AppButton
-          label={isSpymaster ? "I'm the spymaster" : "I'm a field agent"}
-          bg="#fff"
-          textColor={color}
-          onPress={onReady}
-        />
+        <View style={styles.buttonWrap}>
+          <AppButton
+            label={isSpymaster ? "I'm the spymaster" : "I'm a field agent"}
+            bg="#fff"
+            textColor={color}
+            onPress={onReady}
+          />
+        </View>
       </View>
     </View>
   );
@@ -158,5 +160,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: 'center',
     lineHeight: 22,
+  },
+  buttonWrap: {
+    marginTop: 28,
+    width: '100%',
   },
 });

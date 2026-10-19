@@ -8,6 +8,7 @@ export interface TurnHeaderProps {
   progress: Record<Team, { found: number; total: number }>;
   turnsTaken: number;
   maxTurns: number;
+  phase: 'clue' | 'guessing';
 }
 
 function TeamBadge({
@@ -39,7 +40,13 @@ function TeamBadge({
   );
 }
 
-export function TurnHeader({ currentTeam, progress, turnsTaken, maxTurns }: TurnHeaderProps) {
+export function TurnHeader({
+  currentTeam,
+  progress,
+  turnsTaken,
+  maxTurns,
+  phase,
+}: TurnHeaderProps) {
   return (
     <View style={styles.row}>
       <TeamBadge
@@ -53,7 +60,7 @@ export function TurnHeader({ currentTeam, progress, turnsTaken, maxTurns }: Turn
           {turnsTaken}/{maxTurns} turns
         </Text>
         <Text style={[styles.turnTeam, { color: teamColor(currentTeam) }]}>
-          {currentTeam.toUpperCase()} to clue
+          {currentTeam.toUpperCase()} to {phase === 'guessing' ? 'guess' : 'clue'}
         </Text>
       </View>
       <TeamBadge

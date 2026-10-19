@@ -72,6 +72,7 @@ export function GameScreen({ navigation }: Props) {
           progress={progress}
           turnsTaken={game.turnsTaken}
           maxTurns={MAX_TURNS}
+          phase={game.phase === 'guessing' ? 'guessing' : 'clue'}
         />
 
         <Board
